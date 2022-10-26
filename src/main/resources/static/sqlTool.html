@@ -14,26 +14,25 @@
             <el-form label-width="120px">
             <!--            <el-form label-width="120px" style="max-width: 500px">-->
                 <el-form-item label="Database URL">
-                    <el-input v-model="db_url" placeholder="jdbc:oracle:thin:@workout996.icu:1521:XE"/>
+                    <el-input v-model="dbUrl" placeholder="jdbc:oracle:thin:@workout996.icu:1521:XE"/>
                 </el-form-item>
                 <el-form-item label="DBA Username">
-                    <el-input v-model="db_username" placeholder="system"/>
+                    <el-input v-model="dbUsername" placeholder="system"/>
                 </el-form-item>
                 <el-form-item label="DBA Password">
-                    <el-input v-model="db_password" placeholder="password" show-password/>
+                    <el-input v-model="dbPassword" placeholder="password" show-password/>
                 </el-form-item>
             </el-form>
         </el-col>
         <el-col :span="1"></el-col>
         <el-col :span="1">
             <el-button type="primary" @click="handleTestConn()">Test Connection</el-button>
+            {{result}}
         </el-col>
     </el-row>
 </div>
 </body>
 </html>
-
-
 
 
 <script>
@@ -44,20 +43,36 @@
                 backend_url:"http://localhost:8080/tool/dbConn",
                 dbUrl:"jdbc:oracle:thin:@workout996.icu:1521:XE",
                 dbUsername:"system",
-                dbPassword:"Yasuomvp131213"
+                dbPassword:"Yasuomvp131213",
+                result:""
             }
         },
         methods: {
             handleTestConn(){
                 params = {'dbUrl':this.dbUrl,'dbUsername':this.dbUsername,'dbPassword':this.dbPassword}
                 axios.post(this.backend_url,params).then(res => {
-                    console.log(res)
+                    console.log(res.data)
+                    if(res.data == 'yes'){
+                        this.result = "success"
+                        this.$message({
+                            message: 'Connection succeeded',
+                            type: 'success',
+                        })
+                    }else {
+                        this.result = "failed"
+                        this.$message({
+                            message: 'connection failed',
+                            type: 'error',
+                        })
+                    }
                 })
             }
         }
     }
 
 
-    Vue.createApp(app).use(ElementPlus).mount('#app')
-
+    // Vue.createApp(app).use(ElementPlus).mount('#app')
+    myApp = Vue.createApp(app)
+    myApp.use(ElementPlus)
+    myApp.mount('#app')
 </script>
