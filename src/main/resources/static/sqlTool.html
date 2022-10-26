@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <link rel="stylesheet" href="index.css">
+    <script src="vue.global.js"></script>
+    <script src="axios.min.js"></script>
+    <script src="index.full.js"></script>
+    <script src="jquery-3.6.1.js"></script>
+</head>
+<body>
+<div id="app">
+    <el-row>
+        <el-col :span="8">
+            <el-form label-width="120px">
+            <!--            <el-form label-width="120px" style="max-width: 500px">-->
+                <el-form-item label="Database URL">
+                    <el-input v-model="db_url" placeholder="jdbc:oracle:thin:@workout996.icu:1521:XE"/>
+                </el-form-item>
+                <el-form-item label="DBA Username">
+                    <el-input v-model="db_username" placeholder="system"/>
+                </el-form-item>
+                <el-form-item label="DBA Password">
+                    <el-input v-model="db_password" placeholder="password" show-password/>
+                </el-form-item>
+            </el-form>
+        </el-col>
+        <el-col :span="1"></el-col>
+        <el-col :span="1">
+            <el-button type="primary" @click="handleTestConn()">Test Connection</el-button>
+        </el-col>
+    </el-row>
+</div>
+</body>
+</html>
+
+
+
+
+<script>
+
+    const app = {
+        data() {
+            return {
+                backend_url:"http://localhost:8080/tool/dbConn",
+                dbUrl:"jdbc:oracle:thin:@workout996.icu:1521:XE",
+                dbUsername:"system",
+                dbPassword:"Yasuomvp131213"
+            }
+        },
+        methods: {
+            handleTestConn(){
+                params = {'dbUrl':this.dbUrl,'dbUsername':this.dbUsername,'dbPassword':this.dbPassword}
+                axios.post(this.backend_url,params).then(res => {
+                    console.log(res)
+                })
+            }
+        }
+    }
+
+
+    Vue.createApp(app).use(ElementPlus).mount('#app')
+
+</script>
