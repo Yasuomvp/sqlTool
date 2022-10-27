@@ -25,10 +25,45 @@
             </el-form>
         </el-col>
         <el-col :span="1"></el-col>
-        <el-col :span="1">
+        <el-col :span="3">
             <el-button type="primary" @click="handleTestConn()">Test Connection</el-button>
             {{result}}
         </el-col>
+        <el-col :span="2">
+            <el-button type="danger" @click="clearSchemaAndSql()">clear</el-button>
+        </el-col>
+        <el-col :span="2">
+            <el-button type="success" @click="handleExecuteSql()">execute</el-button>
+        </el-col>
+    </el-row>
+    <el-row>
+        <el-col :span="4"></el-col>
+        <el-col :span="16">
+            <el-input
+                    v-model="schemas"
+                    autosize
+                    type="textarea"
+                    placeholder="Please input schemas,split with command"
+            />
+        </el-col>
+        <el-col :span="4"></el-col>
+    </el-row>
+    <el-row>
+        <el-divider />
+
+    </el-row>
+    <el-row>
+        <el-col :span="4"></el-col>
+        <el-col :span="16">
+            <el-input
+                    v-model="sqls"
+                    :autosize="{ minRows: 30 }"
+                    autosize
+                    type="textarea"
+                    placeholder="Please enter sql separated by semicolons"
+            />
+        </el-col>
+        <el-col :span="4"></el-col>
     </el-row>
 </div>
 </body>
@@ -40,17 +75,19 @@
     const app = {
         data() {
             return {
-                backend_url:"http://localhost:8080/tool/dbConn",
+                backend_url:"http://localhost:8080/",
                 dbUrl:"jdbc:oracle:thin:@workout996.icu:1521:XE",
                 dbUsername:"system",
                 dbPassword:"Yasuomvp131213",
-                result:""
+                result:"",
+                schemas:"TEST01,TEST02,TEST03,TEST04,TEST05,TEST06,TEST07,TEST08,TEST09",
+                sqls:"create table userT(id varchar(10) constraint pk_id primary key ,name varchar(20),age varchar(20)) organization index;"
             }
         },
         methods: {
             handleTestConn(){
                 params = {'dbUrl':this.dbUrl,'dbUsername':this.dbUsername,'dbPassword':this.dbPassword}
-                axios.post(this.backend_url,params).then(res => {
+                axios.post(this.backend_url+'tool/dbConn',params).then(res => {
                     console.log(res.data)
                     if(res.data == 'yes'){
                         this.result = "success"
@@ -60,6 +97,26 @@
                         })
                     }else {
                         this.result = "failed"
+                        this.$message({
+                            message: 'connection failed',
+                            type: 'error',
+                        })
+                    }
+                })
+            },
+            clearSchemaAndSql(){
+                this.schemas=""
+                this.sqls=""
+            },
+            handleExecuteSql(){
+                params = {'schemas':this.schemas,'sqls':this.sqls}
+                axios.post(this.backend_url+'tool/executeSql',params).then(res => {
+                    if(res.data == 'yes'){
+                        this.$message({
+                            message: 'execute succeeded',
+                            type: 'success',
+                        })
+                    }else {
                         this.$message({
                             message: 'connection failed',
                             type: 'error',
