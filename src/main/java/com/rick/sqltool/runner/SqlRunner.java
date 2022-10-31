@@ -27,7 +27,7 @@ public class SqlRunner implements Runnable{
     @Override
     public void run() {
 
-        log.info("线程id： "+Thread.currentThread().getId()+" 开始执行 " + this.getShcema() + " 的SQL");
+        log.info("线程名称： "+Thread.currentThread().getName()+" 开始执行 " + this.getShcema() + " 的SQL");
 
         Statement statement = null;
 
@@ -56,7 +56,7 @@ public class SqlRunner implements Runnable{
             }
         }
 
-        log.info("线程id： "+Thread.currentThread().getId() +" " + this.getShcema() + " SQL执行完毕");
+        log.info("线程名称： "+Thread.currentThread().getName() +" " + this.getShcema() + " SQL执行完毕");
 
 
     }
