@@ -13,11 +13,11 @@ import java.util.concurrent.CountDownLatch;
 @Data
 @AllArgsConstructor
 @Slf4j
-public class SqlRunner implements Runnable{
+public class SqlRunner implements Runnable {
 
     private Connection connection;
 
-    private String shcema;
+    private String schema;
 
     private String[] sqls;
 
@@ -27,36 +27,30 @@ public class SqlRunner implements Runnable{
     @Override
     public void run() {
 
-        log.info("线程名称： "+Thread.currentThread().getName()+" 开始执行 " + this.getShcema() + " 的SQL");
+        log.info("线程名称： " + Thread.currentThread().getName() + " 开始执行 " + this.getSchema() + " 的SQL");
 
         Statement statement = null;
-
-
         try {
             statement = connection.createStatement();
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
-
-        String changeSchemaSql = "ALTER SESSION SET CURRENT_SCHEMA = " + this.shcema;
-
+        String changeSchemaSql = "ALTER SESSION SET CURRENT_SCHEMA = " + this.schema;
         try {
             statement.execute(changeSchemaSql);
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
-
         for (String sql : sqls) {
-
             try {
                 statement.execute(sql);
-                countDownLatch.countDown();
             } catch (SQLException e) {
                 throw new RuntimeException(e);
             }
-        }
+            countDownLatch.countDown();
 
-        log.info("线程名称： "+Thread.currentThread().getName() +" " + this.getShcema() + " SQL执行完毕");
+        }
+        log.info("线程名称： " + Thread.currentThread().getName() + " " + this.getSchema() + " SQL执行完毕");
 
 
     }

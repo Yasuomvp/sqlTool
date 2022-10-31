@@ -27,13 +27,14 @@
         <el-col :span="1"></el-col>
         <el-col :span="3">
             <el-button type="primary" @click="handleTestConn()">Test Connection</el-button>
-            {{result}}
+            {{connResult}}
         </el-col>
         <el-col :span="2">
             <el-button type="danger" @click="clearSchemaAndSql()">clear</el-button>
         </el-col>
         <el-col :span="2">
             <el-button type="success" @click="handleExecuteSql()">execute</el-button>
+            {{execResult}}
         </el-col>
     </el-row>
     <el-row>
@@ -79,9 +80,10 @@
                 dbUrl:"jdbc:oracle:thin:@workout996.icu:1521:XE",
                 dbUsername:"system",
                 dbPassword:"Yasuomvp131213",
-                result:"",
+                connResult:"",
+                execResult:"",
                 schemas:"TEST01,TEST02,TEST03,TEST04,TEST05,TEST06,TEST07,TEST08,TEST09",
-                sqls:"create table userT(id varchar(10) constraint pk_id primary key ,name varchar(20),age varchar(20)) organization index;"
+                sqls:"select * from usert;"
             }
         },
         methods: {
@@ -90,13 +92,13 @@
                 axios.post(this.backend_url+'tool/dbConn',params).then(res => {
                     console.log(res.data)
                     if(res.data == 'yes'){
-                        this.result = "success"
+                        this.connResult = "success"
                         this.$message({
                             message: 'Connection succeeded',
                             type: 'success',
                         })
                     }else {
-                        this.result = "failed"
+                        this.connResult = "failed"
                         this.$message({
                             message: 'connection failed',
                             type: 'error',
@@ -110,13 +112,15 @@
             },
             handleExecuteSql(){
                 params = {'schemas':this.schemas,'sqls':this.sqls}
-                axios.post(this.backend_url+'tool/executeSql',params).then(res => {
+                axios.post(this.backend_url+'tool/executeSqlByFuture',params).then(res => {
                     if(res.data == 'yes'){
+                        this.execResult = 'success'
                         this.$message({
                             message: 'execute succeeded',
                             type: 'success',
                         })
                     }else {
+                        this.execResult = 'failed'
                         this.$message({
                             message: 'connection failed',
                             type: 'error',
