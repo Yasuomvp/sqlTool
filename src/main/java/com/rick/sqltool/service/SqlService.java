@@ -4,6 +4,7 @@ import com.rick.sqltool.entity.DbConnectionInfo;
 import com.rick.sqltool.utils.DBUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.sql.Connection;
 import java.sql.SQLException;
@@ -11,6 +12,7 @@ import java.sql.Statement;
 
 @Service
 @Slf4j
+@Transactional(rollbackFor = Exception.class)
 public class SqlService {
 
     public Boolean executeSql(DbConnectionInfo info, String schema, String[] sqls) throws Exception {
