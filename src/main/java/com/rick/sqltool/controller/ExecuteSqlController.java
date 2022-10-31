@@ -3,10 +3,12 @@ package com.rick.sqltool.controller;
 
 import com.rick.sqltool.entity.DbConnectionInfo;
 import com.rick.sqltool.entity.SchemaAndSqlInfo;
+import com.rick.sqltool.runner.SqlRunner;
 import com.rick.sqltool.utils.DBUtil;
 import lombok.extern.log4j.Log4j;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Controller;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -17,11 +19,17 @@ import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.Arrays;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.LinkedBlockingQueue;
+import java.util.concurrent.ThreadPoolExecutor;
+import java.util.concurrent.TimeUnit;
 
 @Controller
 @RequestMapping("/tool")
 @CrossOrigin
 public class ExecuteSqlController {
+
+    private DbConnectionInfo dbConnectionInfo;
 
     @RequestMapping("/test")
     @ResponseBody
@@ -32,30 +40,38 @@ public class ExecuteSqlController {
     @RequestMapping("/dbConn")
     @ResponseBody
     public String dbConn(@RequestBody DbConnectionInfo info){
+        Connection connection = null;
         try {
-            DBUtil.setAndReturnConnection(info.getDbUrl(), info.getDbUsername(), info.getDbPassword());
+            connection = DBUtil.getConnection(info.getDbUrl(), info.getDbUsername(), info.getDbPassword());
             return "yes";
         } catch (Exception e) {
             return "shit";
+        } finally {
+            try {
+                connection.close();
+                this.dbConnectionInfo = info;
+            } catch (SQLException e) {
+                throw new RuntimeException(e);
+            }
         }
     }
 
     @RequestMapping("/executeSql")
     @ResponseBody
-    public String executeSql(@RequestBody SchemaAndSqlInfo info) throws SQLException {
+    @Transactional(rollbackFor = Exception.class)
+    public String executeSql(@RequestBody SchemaAndSqlInfo info) throws Exception {
         String[] schemas = info.getSchemas().split(",");
         String[] sqls = info.getSqls().split(";");
 
-        Connection connection = DBUtil.getConnection();
-        Statement statement = connection.createStatement();
+        ThreadPoolExecutor threadPoolExecutor = new ThreadPoolExecutor(schemas.length * 2, 100, 60, TimeUnit.SECONDS, new LinkedBlockingQueue());
+        CountDownLatch countDownLatch = new CountDownLatch(schemas.length);
+
 
         for (String schema : schemas) {
-            String changeSchemaSql = "ALTER SESSION SET CURRENT_SCHEMA = " + schema;
-            statement.execute(changeSchemaSql);
-            for (String sql : sqls) {
-                statement.execute(sql);
-            }
+            Connection connection = DBUtil.getConnection(dbConnectionInfo.getDbUrl(),dbConnectionInfo.getDbUsername(),dbConnectionInfo.getDbPassword());
+            threadPoolExecutor.execute(new SqlRunner(connection,schema,sqls,countDownLatch));
         }
+        countDownLatch.await();
         return "yes";
 
     }

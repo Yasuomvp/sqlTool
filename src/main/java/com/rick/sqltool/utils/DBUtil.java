@@ -9,19 +9,11 @@ import java.sql.SQLException;
 @Component
 public class DBUtil {
 
-    private static Connection dbconnection;
-
-    public static Connection getConnection(){
-        return dbconnection;
-    }
-
-    public static Connection setAndReturnConnection(String URL,String USER,String PASSWORD) throws Exception {
-
+    public static Connection getConnection(String URL,String USER,String PASSWORD) throws Exception{
         // 加载Oracle驱动
         Class.forName("oracle.jdbc.driver.OracleDriver");
         // 连接数据库
-        dbconnection =  DriverManager.getConnection(URL, USER, PASSWORD);
-        return dbconnection;
+        return DriverManager.getConnection(URL, USER, PASSWORD);
     }
 
 }
