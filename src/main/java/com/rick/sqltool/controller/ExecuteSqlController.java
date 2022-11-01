@@ -6,6 +6,7 @@ import com.rick.sqltool.entity.SchemaAndSqlInfo;
 import com.rick.sqltool.runner.SqlRunner;
 import com.rick.sqltool.service.SqlService;
 import com.rick.sqltool.utils.DBUtil;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -29,8 +30,11 @@ public class ExecuteSqlController {
 
     private final SqlService sqlService;
 
-    public ExecuteSqlController(SqlService sqlService) {
+    private final ThreadPoolExecutor threadPoolExecutor;
+
+    public ExecuteSqlController(SqlService sqlService, ThreadPoolExecutor threadPoolExecutor) {
         this.sqlService = sqlService;
+        this.threadPoolExecutor = threadPoolExecutor;
     }
 
     @RequestMapping("/test")
@@ -65,7 +69,6 @@ public class ExecuteSqlController {
         String[] schemas = info.getSchemas().split(",");
         String[] sqls = info.getSqls().split(";");
 
-        ThreadPoolExecutor threadPoolExecutor = new ThreadPoolExecutor(schemas.length * 2, 100, 60, TimeUnit.SECONDS, new LinkedBlockingQueue());
         CountDownLatch countDownLatch = new CountDownLatch(schemas.length);
 
         for (String schema : schemas) {
@@ -87,7 +90,6 @@ public class ExecuteSqlController {
         String[] sqls = info.getSqls().split(";");
 
         List<CompletableFuture<Boolean>> futureList = new ArrayList<>();
-        ThreadPoolExecutor threadPoolExecutor = new ThreadPoolExecutor(schemas.length * 2, 100, 60, TimeUnit.SECONDS, new LinkedBlockingQueue());
         AtomicBoolean flag = new AtomicBoolean(true);
 
         for (String schema:schemas){
