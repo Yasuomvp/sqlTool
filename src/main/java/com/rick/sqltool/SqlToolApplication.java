@@ -15,9 +15,5 @@ public class SqlToolApplication {
         SpringApplication.run(SqlToolApplication.class, args);
     }
 
-    @RequestMapping("/")
-    public String mainPage(){
-        return "forward:sqlTool.html";
-    }
 
 }
