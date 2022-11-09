@@ -1,0 +1,5 @@
+spring:
+  datasource:
+    url: jdbc:mysql://workout996.icu:3306
+    username: rick
+    password: Qazwsx1-.
