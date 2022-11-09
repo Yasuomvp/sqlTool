@@ -17,6 +17,11 @@
         <java.version>19</java.version>
     </properties>
     <dependencies>
+        <dependency>
+            <groupId>com.baomidou</groupId>
+            <artifactId>mybatis-plus-boot-starter</artifactId>
+            <version>3.5.2</version>
+        </dependency>
 
         <!--		添加aop注解依赖-->
         <dependency>
