@@ -49,9 +49,9 @@ public class ExecuteSqlController {
         Connection connection = null;
         try {
             connection = DBUtil.getConnection(info.getDbUrl(), info.getDbUsername(), info.getDbPassword());
-            return "yes";
+            return null;
         } catch (Exception e) {
-            return "shit";
+            throw new RuntimeException(e);
         } finally {
             try {
                 connection.close();

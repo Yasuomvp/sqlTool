@@ -16,8 +16,8 @@ public class test {
 
     @Test
     public void test01() throws Exception {
-        Connection connection = DBUtil.setAndReturnConnection(URL, USER, PASSWORD);
-        System.out.println(connection);
+        long l = System.currentTimeMillis();
+        System.out.println(l);
     }
 
 }

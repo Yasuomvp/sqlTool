@@ -1,5 +1,7 @@
 package com.rick.sqltool.advice;
 
+import com.rick.sqltool.result.ResultData;
+import com.rick.sqltool.result.ReturnCode;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.el.util.ExceptionUtils;
 import org.springframework.web.bind.annotation.ControllerAdvice;
@@ -18,23 +20,23 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(RuntimeException.class)
     @ResponseBody
-    public String handleSQLException(RuntimeException e){
+    public ResultData<String> handleSQLException(RuntimeException e){
         log.error(getStackTrace(e));
-        return "shit";
+        return ResultData.fail(ReturnCode.RC500.getCode(),e.getMessage());
     }
 
     @ExceptionHandler(SQLSyntaxErrorException.class)
     @ResponseBody
-    public String handleSQLSyntaxErrorException(SQLSyntaxErrorException e){
+    public ResultData<String> handleSQLSyntaxErrorException(SQLSyntaxErrorException e){
         log.error(getStackTrace(e));
-        return "shit";
+        return ResultData.fail(ReturnCode.RC500.getCode(),e.getMessage());
     }
 
     @ExceptionHandler(Exception.class)
     @ResponseBody
-    public String handleException(Exception e){
+    public ResultData<String> handleException(Exception e){
         log.error(getStackTrace(e));
-        return "shit";
+        return ResultData.fail(ReturnCode.RC500.getCode(),e.getMessage());
     }
 
     public String getStackTrace(Throwable t) {

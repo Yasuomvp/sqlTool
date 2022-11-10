@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 @SpringBootApplication
 @Controller
 @EnableAsync
-@MapperScan
+@MapperScan("com.rick.sqltool.generator.mapper")
 public class SqlToolApplication {
 
     public static void main(String[] args) {

@@ -1,5 +1,8 @@
 spring:
+  mvc:
+    servlet:
+      load-on-startup: 1
   datasource:
-    url: jdbc:mysql://workout996.icu:3306
+    url: jdbc:mysql://workout996.icu:3306/sqltool
     username: rick
     password: Qazwsx1-.
