@@ -24,6 +24,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 @Controller
 @RequestMapping("/tool")
 @CrossOrigin
+@Transactional
 public class ExecuteSqlController {
 
     private DbConnectionInfo dbConnectionInfo;
