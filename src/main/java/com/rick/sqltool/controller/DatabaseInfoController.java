@@ -5,7 +5,6 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.rick.sqltool.generator.domain.Datasource;
 import com.rick.sqltool.generator.mapper.DatasourceMapper;
 import com.rick.sqltool.generator.service.DatasourceService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
@@ -44,6 +43,12 @@ public class DatabaseInfoController {
     @ResponseBody
     public IPage<Datasource> listAllByPage(@RequestParam("current") Long current, @RequestParam("size") Long size){
         return datasourceService.page(new Page<>(current, size));
+    }
+
+    @DeleteMapping("/del/{id}")
+    @ResponseBody
+    public Boolean delById(@PathVariable("id") Integer id){
+        return datasourceService.removeById(id);
     }
 
 }
