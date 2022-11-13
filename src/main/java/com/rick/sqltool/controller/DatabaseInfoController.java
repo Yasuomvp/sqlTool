@@ -15,7 +15,6 @@ import java.util.List;
 @Controller
 @RequestMapping("/db")
 @CrossOrigin
-@Transactional
 public class DatabaseInfoController {
 
     private final DatasourceService datasourceService;
